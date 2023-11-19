@@ -38,30 +38,10 @@ function setup() {
   let cWidth = ui_offs + cv_d * 2 + 50 * 3;
   let cHeight = cv_d + 100;
   document.body.style.zoom = (Math.min((innerHeight - 25) / cHeight, (innerWidth - 25) / cWidth)).toFixed(1);
-  createCanvas(cWidth-10, cHeight);
+  createCanvas(ui_offs, 0, cWidth-10, cHeight);
+  
 
-  help = QuickSettings.create(ui_offs - 10, 0, "Помощь (кликни дважды)")
-    .addHTML("Выбор изображения", '<div style="height:30px"></div>')
-    .addHTML('Размер изображения', '<div style="height:20px"></div>')
-    .addHTML('Яркость', '<div style="height:20px"></div>')
-    .addHTML('Контраст', '<div style="height:20px"></div>')
-    .addHTML('Диаметр холста, см', '<div style="height:20px"></div>')
-    .addHTML('Толщина нитки, мм', '<div style="height:20px"></div>')
-    .addHTML('Количество гвоздей', '<div style="height:20px"></div>')
-    .addHTML('Максимум линий', '<div style="height:20px"></div>')
-    .addHTML('Ширина очистки', '<div style="height:20px"></div>')
-    .addHTML('Прозрачность очистки', '<div style="height:20px"></div>')
-    .addHTML('Запрет на угол возврата', '<div style="height:20px"></div>')
-    .addHTML('Максимум ниток на гвозде', '<div style="height:20px"></div>')
-    .addHTML('Оптимизация чёрных полос', '')
-    .addHTML('Общее улучшение', '')
-    .addHTML('Приоритет линий в центре', '')
-    .addHTML('Минимальное расстояние до след. гвоздя - 1/4 круга', '')
-    .setWidth(200)
-    .setDraggable(false)
-    .collapse()
-
-  ui = QuickSettings.create(0, 0, "Crazy virtual laboratories v 0.1")
+  ui = QuickSettings.create(0, 0, "Crazy virtual laboratories v 0.2")
     .addFileChooser("Load task", "", ".png,.txt", handleFile)
 
     //.addNumber('Diameter', 10, 100, 30, 0.1, update_h)
@@ -80,6 +60,17 @@ function setup() {
       "<input name='guruweba_example_text' type='text' id='ib' value='', style='width:"+ui_offs/2+"px' />"+
       "<button class='qs_button' onclick='cd()'>Add</button>"+
       "<button class='qs_button' onclick='open_printer_wifi()'>Create</button>"
+    )
+    
+    /*.addHTML("Save task",
+      "<button class='qs_button' onclick='savef(true)'>Save</button>&nbsp;" +
+      "<button class='qs_button' onclick='savef(false)'>Save without solution</button>"
+    )*/
+    
+    .addHTML("Task",
+      "<div id='namefile'>Name: </div>"+
+      "<button class='qs_button' onclick='savef(true)'>Save</button>&nbsp;" +
+      "<button class='qs_button' onclick='savef(false)'>Save without solution</button>"
     )
     //.addHTML("Status", "Stop")
     //.addText("Nodes", "")
@@ -109,15 +100,35 @@ function mousePressed() {
 }
 
 var f;
+var tf="";
+var fn="";
+let words;
 
 function handleFile(file) {
-    f = new p5.File(file);
-    var words = loadStrings(URL.createObjectURL(file));
+    document.getElementById("namefile").innerHTML = "Name: "+file.name;
+    words = loadStrings(URL.createObjectURL(file));
+    btf();
     console.log(URL.createObjectURL(file));
     console.log(words);
     //saveStrings("123", 'words.txt');
+    fn = file.name;
     console.log(file.data);
+    console.log(fn);
+    
+    textSize(20);
+    for (var i=0; i<words.length; i++) {
+      text(words[i], 5, 20*i+20);
+    }
 }
 
 
 function update_h(){}
+function btf(){
+    for(var i=0;i<words.length;i++) {tf+=words[i]+"/n";console.log("123");}
+}
+
+function savef(b) {
+    console.log(b);
+    btf();
+    saveStrings(words, fn);
+}
